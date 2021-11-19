@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://code.alibabatech.com/schema/dubbo
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd"
+           xmlns:tx="http://www.springframework.org/schema/tx"
+           xmlns:mvc="http://www.springframework.org/schema/mvc"
+           xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+           xmlns:context="http://www.springframework.org/schema/context"
+           xmlns:p="http://www.springframework.org/schema/p"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www.springframework.org/schema/beans">
+    <!--声明应用的名称。用于注册中心对我们的项目识别-->
+    <dubbo:application name="dubbodemo_provider"></dubbo:application>
+    <!--指定服务注册的中心地址-->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"></dubbo:registry>
+    <!--注册 协议和port 端口默认是20880-->
+    <dubbo:protocol name="dubbo" port="20881"></dubbo:protocol>
+    <!--扫描指定包，加入@server注解的类会被发布为服务-->
+    <dubbo:annotation package="com.jay.service"></dubbo:annotation>
+    <!--配置数据源-->
+    <bean id="datasource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="username" value="root"></property>
+        <property name="password" value="xiaojie11"></property>
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/mysql_1?serverTimezone=GMT%2B8"></property>
+    </bean>
+    <!--事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="datasource"></property>
+    </bean>
+    <!--开启事务控制的注解支持
+        proxy-target-class="true" 采用Cglib代理增加事务切面操作
+        Cglib代理基于继承的
+    -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"></tx:annotation-driven>
+</beans>
